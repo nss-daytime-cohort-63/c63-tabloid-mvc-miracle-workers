@@ -206,6 +206,25 @@ namespace TabloidMVC.Repositories
             }
         }
 
+        public void DeletePost(int postId, int userProfileId)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        DELETE FROM Post 
+                        WHERE Id = @id
+                        AND UserProfileId = @userProfileId";
+                    cmd.Parameters.AddWithValue("@id", postId);
+                    cmd.Parameters.AddWithValue("@userProfileId", userProfileId);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
         private Post NewPostFromReader(SqlDataReader reader)
         {
             return new Post()
