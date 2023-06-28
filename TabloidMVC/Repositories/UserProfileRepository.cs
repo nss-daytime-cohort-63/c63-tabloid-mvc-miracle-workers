@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using TabloidMVC.Models;
 using TabloidMVC.Utils;
 
@@ -7,6 +9,56 @@ namespace TabloidMVC.Repositories
     public class UserProfileRepository : BaseRepository, IUserProfileRepository
     {
         public UserProfileRepository(IConfiguration config) : base(config) { }
+
+        //method to get a list of all user profiles from the database
+        public List<UserProfile> GetAll()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"select UserProfile.Id as UserId, DisplayName, FirstName, LastName, Email, CreateDateTime,ImageLocation, UserType.Name
+                                        from UserProfile
+                                        join UserType on UserProfile.UserTypeId = UserType.Id";
+
+                    List<UserProfile> users = new List<UserProfile>();
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        UserProfile newUser = new UserProfile()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("UserId")),
+                            DisplayName = reader.GetString(reader.GetOrdinal("DisplayName")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                            Email = reader.GetString(reader.GetOrdinal("Email")),
+                            CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
+                            UserType = new UserType()
+                            {
+                            Name = reader.GetString(reader.GetOrdinal("Name"))
+                            }
+                        };
+                        if (reader.IsDBNull(reader.GetOrdinal("ImageLocation"))==false)
+                        {
+                            newUser.ImageLocation = reader.GetString(reader.GetOrdinal("ImageLocation"));
+
+                        }
+                        else
+                        {
+                            users.Add(newUser);
+
+                        }
+
+                        
+                    }
+                    return users;
+                }
+            } 
+        }
+
+
+
 
         public UserProfile GetByEmail(string email)
         {
