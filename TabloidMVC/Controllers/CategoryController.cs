@@ -47,27 +47,27 @@ namespace TabloidMVC.Controllers
                 return View();
             }
         }
+        [Authorize]
+        public ActionResult Edit(int id)
+        {
+            return View(_categoryRepository.FindCategoryById(id));
+        }
 
-        //// GET: HomeController1/Edit/5
-        //public ActionResult Edit(int id)
-        //{
-        //    return View();
-        //}
-
-        //// POST: HomeController1/Edit/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
+        // POST: HomeController1/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Category category)
+        {
+            try
+            {
+                _categoryRepository.EditCategory(category);
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View(category);
+            }
+        }
 
         //// GET: HomeController1/Delete/5
         //public ActionResult Delete(int id)
