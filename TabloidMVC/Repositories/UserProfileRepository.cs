@@ -16,18 +16,45 @@ namespace TabloidMVC.Repositories
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
-                using (SqlCommand cmd = conn.CreateCommand()) 
+                using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"select DisplayName, FirstName, LastName, Email, CreateDateTime,ImageLocation, ";
-                
+                    cmd.CommandText = @"select UserProfile.Id as UserId, DisplayName, FirstName, LastName, Email, CreateDateTime,ImageLocation, UserType.Name
+                                        from UserProfile
+                                        join UserType on UserProfile.UserTypeId = UserType.Id";
+
+                    List<UserProfile> users = new List<UserProfile>();
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        UserProfile newUser = new UserProfile()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("UserId")),
+                            DisplayName = reader.GetString(reader.GetOrdinal("DisplayName")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                            Email = reader.GetString(reader.GetOrdinal("Email")),
+                            CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
+                            UserType = new UserType()
+                            {
+                            Name = reader.GetString(reader.GetOrdinal("Name"))
+                            }
+                        };
+                        if (reader.IsDBNull(reader.GetOrdinal("ImageLocation"))==false)
+                        {
+                            newUser.ImageLocation = reader.GetString(reader.GetOrdinal("ImageLocation"));
+
+                        }
+                        else
+                        {
+                            users.Add(newUser);
+
+                        }
+
+                        
+                    }
+                    return users;
                 }
-            }
-
-
-
-
-
-                return users
+            } 
         }
 
 
