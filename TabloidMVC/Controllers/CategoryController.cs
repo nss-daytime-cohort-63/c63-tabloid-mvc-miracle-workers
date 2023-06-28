@@ -69,25 +69,26 @@ namespace TabloidMVC.Controllers
             }
         }
 
-        //// GET: HomeController1/Delete/5
-        //public ActionResult Delete(int id)
-        //{
-        //    return View();
-        //}
+       [Authorize]
+        public ActionResult Delete(int id)
+        {       
+            return View(_categoryRepository.FindCategoryById(id));
+        }
 
-        //// POST: HomeController1/Delete/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Delete(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
+        // POST: HomeController1/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, Category category)
+        {
+            try
+            {
+                _categoryRepository.DeleteCategory(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View(category);
+            }
+        }
     }
 }

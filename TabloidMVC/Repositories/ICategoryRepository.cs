@@ -9,5 +9,6 @@ namespace TabloidMVC.Repositories
         void Add(Category category);
         void EditCategory(Category category);
         Category FindCategoryById(int id);
+        void DeleteCategory(int id);
     }
 }
