@@ -35,8 +35,34 @@ namespace TabloidMVC.Controllers
             var posts = _postRepository.GetAllPublishedPostsByAuthorId(myId);
             return View(posts);
         }
+        [Authorize]
+        public IActionResult UnapprovedIndex()
+        {          
+            var posts = _postRepository.GetAllUnapprovedPosts();
+            return View(posts);
+        }
 
+        [Authorize]
+        public IActionResult Approval(int id)
+        {
+            return View(_postRepository.GetUnapprovedPostById(id));
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Approval(Post post)
+        {
+            try
+            {
+                _postRepository.EditPostApproval(post);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{ex.Message}");
+                return View(post);
+            }
+        }
         public IActionResult Details(int id)
         {
             var post = _postRepository.GetPublishedPostById(id);
@@ -65,7 +91,7 @@ namespace TabloidMVC.Controllers
             try
             {
                 vm.Post.CreateDateTime = DateAndTime.Now;
-                vm.Post.IsApproved = true;
+                vm.Post.IsApproved = false;
                 vm.Post.UserProfileId = GetCurrentUserProfileId();
 
                 _postRepository.Add(vm.Post);
