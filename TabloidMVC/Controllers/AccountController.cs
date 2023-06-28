@@ -49,6 +49,17 @@ namespace TabloidMVC.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Register(UserProfile userProfile)
+        {
+            _userProfileRepository.Add(userProfile);
+            return RedirectToAction("Login");
+        }
 
         public async Task<IActionResult> Logout()
         {

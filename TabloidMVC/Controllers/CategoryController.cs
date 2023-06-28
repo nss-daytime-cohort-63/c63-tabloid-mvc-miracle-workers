@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -17,32 +18,35 @@ namespace TabloidMVC.Controllers
         {           
             _categoryRepository = categoryRepository;
         }
+        [Authorize]
         public ActionResult Index()
-        {
-            List<Category> categories = _categoryRepository.GetAll();
-            return View(categories);
+        {               
+                List<Category> categories = _categoryRepository.GetAll();
+                return View(categories);                   
         }
 
         //// GET: HomeController1/Create
-        //public ActionResult Create()
-        //{
-        //    return View();
-        //}
+        [Authorize]
+        public ActionResult Create()
+        {
+            return View();
+        }
 
-        //// POST: HomeController1/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Create(IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
+        // POST: HomeController1/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(Category category)
+        {
+            try
+            {
+                _categoryRepository.Add(category);
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
 
         //// GET: HomeController1/Edit/5
         //public ActionResult Edit(int id)
