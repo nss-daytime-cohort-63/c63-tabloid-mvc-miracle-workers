@@ -22,5 +22,7 @@ namespace TabloidMVC.Models
                 return $"{FirstName} {LastName}";
             }
         }
+
+        public bool ActiveFlag { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"select UserProfile.Id as UserId, DisplayName, FirstName, LastName, Email, CreateDateTime,ImageLocation,UserType.Id as TypeId, UserType.Name
+                    cmd.CommandText = @"select UserProfile.Id as UserId, DisplayName, FirstName, LastName, Email, CreateDateTime,ImageLocation,UserType.Id as TypeId, UserType.Name, ActiveFlag
                                         from UserProfile
                                         join UserType on UserProfile.UserTypeId = UserType.Id";
 
@@ -38,7 +38,8 @@ namespace TabloidMVC.Repositories
                             {
                             Id = reader.GetInt32(reader.GetOrdinal("TypeId")),
                             Name = reader.GetString(reader.GetOrdinal("Name"))
-                            }
+                            },
+                            ActiveFlag = reader.GetBoolean(reader.GetOrdinal("ActiveFlag"))
                         };
                         if (reader.IsDBNull(reader.GetOrdinal("ImageLocation"))==false)
                         {
@@ -154,9 +155,9 @@ namespace TabloidMVC.Repositories
                 {
                     cmd.CommandText = @"
                         INSERT INTO UserProfile (
-                        FirstName, LastName, DisplayName, Email, CreateDateTime, ImageLocation, UserTypeId)
+                        FirstName, LastName, DisplayName, Email, CreateDateTime, ImageLocation, UserTypeId, ActiveFlag)
                         OUTPUT INSERTED.ID
-                        VALUES ( @FirstName, @LastName, @DisplayName, @Email, @CreateDateTime, @ImageLocation, @UserTypeId)";
+                        VALUES ( @FirstName, @LastName, @DisplayName, @Email, @CreateDateTime, @ImageLocation, @UserTypeId, @Activeflag)";
                     cmd.Parameters.AddWithValue("@FirstName", userProfile.FirstName);
                     cmd.Parameters.AddWithValue("@LastName", userProfile.LastName);
                     cmd.Parameters.AddWithValue("@DisplayName", userProfile.DisplayName);
@@ -164,6 +165,7 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@CreateDateTime", System.DateTime.Now);
                     cmd.Parameters.AddWithValue("@ImageLocation", DbUtils.ValueOrDBNull(userProfile.ImageLocation));
                     cmd.Parameters.AddWithValue("@UserTypeId", 2);
+                    cmd.Parameters.AddWithValue("@Activeflag", 0);
 
                     userProfile.Id = (int)cmd.ExecuteScalar();
                 }
