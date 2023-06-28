@@ -14,6 +14,14 @@
             <div class="row justify-content-between">
                 <p class="text-secondary">Written by @Model.UserProfile.DisplayName</p>
                 <p class="text-black-50">Published on @Html.DisplayFor(model => model.PublishDateTime)</p>
+                @if(Model.EstimatedReadTime > 1)
+                    {
+                        <p class="text-black-50">Estimated Read Time @Html.DisplayFor(model => model.EstimatedReadTime) minutes</p>
+                    }
+                else 
+                    {
+                        <p class="text-black-50">Estimated Read Time @Html.DisplayFor(model => model.EstimatedReadTime) minute</p>
+                    }
             </div>
             <div class="row">
                 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary mx-1" title="Edit">

@@ -18,7 +18,7 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"select UserProfile.Id as UserId, DisplayName, FirstName, LastName, Email, CreateDateTime,ImageLocation, UserType.Name
+                    cmd.CommandText = @"select UserProfile.Id as UserId, DisplayName, FirstName, LastName, Email, CreateDateTime,ImageLocation,UserType.Id as TypeId, UserType.Name
                                         from UserProfile
                                         join UserType on UserProfile.UserTypeId = UserType.Id";
 
@@ -36,6 +36,7 @@ namespace TabloidMVC.Repositories
                             CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
                             UserType = new UserType()
                             {
+                            Id = reader.GetInt32(reader.GetOrdinal("TypeId")),
                             Name = reader.GetString(reader.GetOrdinal("Name"))
                             }
                         };
@@ -44,19 +45,58 @@ namespace TabloidMVC.Repositories
                             newUser.ImageLocation = reader.GetString(reader.GetOrdinal("ImageLocation"));
 
                         }
-                        else
-                        {
-                            users.Add(newUser);
+                        users.Add(newUser);
 
-                        }
-
-                        
+      
                     }
                     return users;
                 }
             } 
         }
 
+        public UserProfile GetById(int id)
+        {
+            using(SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"select UserProfile.Id as UserId, DisplayName, FirstName, LastName, Email, CreateDateTime,ImageLocation, UserType.Id as TypeId, UserType.Name
+                                        from UserProfile
+                                        join UserType on UserProfile.UserTypeId = UserType.Id
+                                        where UserProfile.Id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    UserProfile selectedUser = new UserProfile();
+                    if(reader.Read()) 
+                    {
+                        
+                        {
+                            selectedUser.Id = reader.GetInt32(reader.GetOrdinal("UserId"));
+                            selectedUser.DisplayName = reader.GetString(reader.GetOrdinal("DisplayName"));
+                            selectedUser.FirstName = reader.GetString(reader.GetOrdinal("FirstName"));
+                            selectedUser.LastName = reader.GetString(reader.GetOrdinal("LastName"));
+                            selectedUser.Email = reader.GetString(reader.GetOrdinal("Email"));
+                            selectedUser.CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime"));
+                            selectedUser.UserType = new UserType()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("TypeId")),
+                                Name = reader.GetString(reader.GetOrdinal("Name"))
+                            };
+                        }
+                            if (reader.IsDBNull(reader.GetOrdinal("ImageLocation")) == false)
+                            {
+                            selectedUser.ImageLocation = reader.GetString(reader.GetOrdinal("ImageLocation"));
+
+                            }
+
+                    };
+                    return selectedUser;
+
+                }
+            }
+        }
 
 
 
