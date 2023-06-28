@@ -75,5 +75,11 @@ namespace TabloidMVC.Controllers
             return View(allUsers);
         
         }
+
+        public IActionResult Details(int Id)
+        {
+            UserProfile chosenOne = _userProfileRepository.GetById(Id);
+            return View(chosenOne);
+        }
     }
 }
