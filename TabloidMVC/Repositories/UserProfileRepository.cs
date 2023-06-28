@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using TabloidMVC.Models;
 using TabloidMVC.Utils;
 
@@ -7,6 +9,29 @@ namespace TabloidMVC.Repositories
     public class UserProfileRepository : BaseRepository, IUserProfileRepository
     {
         public UserProfileRepository(IConfiguration config) : base(config) { }
+
+        //method to get a list of all user profiles from the database
+        public List<UserProfile> GetAll()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand()) 
+                {
+                    cmd.CommandText = @"select DisplayName, FirstName, LastName, Email, CreateDateTime,ImageLocation, ";
+                
+                }
+            }
+
+
+
+
+
+                return users
+        }
+
+
+
 
         public UserProfile GetByEmail(string email)
         {
