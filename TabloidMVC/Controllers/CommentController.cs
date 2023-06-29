@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
@@ -18,10 +19,20 @@ namespace TabloidMVC.Controllers
         // GET: Comment
         public ActionResult Index(int id)
         {
-            var comments = _commentRepository.GetAllCommentsByPostId(id);
-            ViewBag.PostTitle = comments[0].PostTitle;
-            ViewBag.PostId = comments[0].PostId;
-            return View(comments);
+            try
+            {
+                var comments = _commentRepository.GetAllCommentsByPostId(id);
+                if (comments.Count > 0)
+                {
+                    ViewBag.PostTitle = comments[0].PostTitle;
+                    ViewBag.PostId = comments[0].PostId;
+                }
+                return View(comments);
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
         }
 
         // GET: Comment/Details/5
