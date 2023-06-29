@@ -62,7 +62,7 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"select UserProfile.Id as UserId, DisplayName, FirstName, LastName, Email, CreateDateTime,ImageLocation, UserType.Id as TypeId, UserType.Name
+                    cmd.CommandText = @"select UserProfile.Id as UserId, DisplayName, FirstName, LastName, Email, CreateDateTime,ImageLocation, UserType.Id as TypeId, UserType.Name, ActiveFlag
                                         from UserProfile
                                         join UserType on UserProfile.UserTypeId = UserType.Id
                                         where UserProfile.Id = @id";
@@ -80,6 +80,7 @@ namespace TabloidMVC.Repositories
                             selectedUser.LastName = reader.GetString(reader.GetOrdinal("LastName"));
                             selectedUser.Email = reader.GetString(reader.GetOrdinal("Email"));
                             selectedUser.CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime"));
+                            selectedUser.ActiveFlag = reader.GetBoolean(reader.GetOrdinal("ActiveFlag"));
                             selectedUser.UserType = new UserType()
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("TypeId")),
@@ -110,7 +111,7 @@ namespace TabloidMVC.Repositories
                 {
                     cmd.CommandText = @"
                        SELECT u.id, u.FirstName, u.LastName, u.DisplayName, u.Email,
-                              u.CreateDateTime, u.ImageLocation, u.UserTypeId,
+                              u.CreateDateTime, u.ImageLocation, u.UserTypeId,u.ActiveFlag,
                               ut.[Name] AS UserTypeName
                          FROM UserProfile u
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
@@ -132,6 +133,7 @@ namespace TabloidMVC.Repositories
                             CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
                             ImageLocation = DbUtils.GetNullableString(reader, "ImageLocation"),
                             UserTypeId = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
+                            ActiveFlag = reader.GetBoolean(reader.GetOrdinal("ActiveFlag")),
                             UserType = new UserType()
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
@@ -165,11 +167,32 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@CreateDateTime", System.DateTime.Now);
                     cmd.Parameters.AddWithValue("@ImageLocation", DbUtils.ValueOrDBNull(userProfile.ImageLocation));
                     cmd.Parameters.AddWithValue("@UserTypeId", 2);
-                    cmd.Parameters.AddWithValue("@Activeflag", 0);
+                    cmd.Parameters.AddWithValue("@Activeflag", 1);
 
                     userProfile.Id = (int)cmd.ExecuteScalar();
                 }
             }
+        }
+
+
+
+        public void DeactivateById(int id)
+        {
+            using (SqlConnection conn = Connection) 
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand()) 
+                {
+                    cmd.CommandText = @"Update UserProfile
+                                        set UserProfile.ActiveFlag = 0
+                                        where Id=@id";
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    cmd.ExecuteNonQuery();
+                
+                }
+            }
+
         }
     }
 }

@@ -23,6 +23,6 @@ namespace TabloidMVC.Models
             }
         }
 
-        public bool ActiveFlag { get; set; }
+        public Boolean ActiveFlag { get; set; }
     }
 }
