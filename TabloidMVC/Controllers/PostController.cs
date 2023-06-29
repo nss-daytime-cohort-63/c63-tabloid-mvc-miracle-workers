@@ -189,7 +189,7 @@ namespace TabloidMVC.Controllers
                 }
                 _postRepository.AddTagToPost(pt.Post.Id, pt.Tag.Id);
                 
-                return RedirectToAction("Index");
+                return RedirectToAction("Details");
             }
             catch (Exception ex)
             {
