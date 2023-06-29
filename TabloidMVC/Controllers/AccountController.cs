@@ -28,7 +28,7 @@ namespace TabloidMVC.Controllers
         {
             var userProfile = _userProfileRepository.GetByEmail(credentials.Email);
 
-            if (userProfile == null)
+            if (userProfile == null || userProfile.ActiveFlag==false)
             {
                 ModelState.AddModelError("Email", "Invalid email");
                 return View();
@@ -80,6 +80,22 @@ namespace TabloidMVC.Controllers
         {
             UserProfile chosenOne = _userProfileRepository.GetById(Id);
             return View(chosenOne);
+        }
+
+        public IActionResult Deactivate(int id) 
+        {
+            UserProfile userProfile = _userProfileRepository.GetById(id);
+           
+            return View(userProfile);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Deactivate(UserProfile deactivateUser)
+        {
+            
+            _userProfileRepository.DeactivateById(deactivateUser.Id);
+            return RedirectToAction("Index"); ;
         }
     }
 }
