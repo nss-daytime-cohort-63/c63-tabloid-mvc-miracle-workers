@@ -13,6 +13,27 @@ namespace TabloidMVC.Repositories
     {
         public CommentRepository(IConfiguration config) : base(config) { }
 
+        public void AddComment(Comment comment)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"INSERT INTO Comment (PostId, UserProfileId, Subject, Content, CreateDateTime)
+                                        OUTPUT INSERTED.Id
+                                        VALUES (@postId, @userProfileId, @subject, @content, SYSDATETIME())";
+
+                    cmd.Parameters.AddWithValue("@postId", comment.PostId);
+                    cmd.Parameters.AddWithValue("@userProfileId", comment.UserProfileId);
+                    cmd.Parameters.AddWithValue("@subject", comment.Subject);
+                    cmd.Parameters.AddWithValue("@content", comment.Content);
+
+                    comment.Id = (int)cmd.ExecuteScalar();
+                }
+            }
+        }
+
         public List<Comment> GetAllCommentsByPostId(int id)
         {
             using (var conn = Connection)
@@ -25,7 +46,7 @@ namespace TabloidMVC.Repositories
 	                                           c.UserProfileId,
 	                                           c.Subject,
 	                                           c.Content,
-	                                           c.CreateDateTime,
+	                                           c.CreateDateTime AS CommentCreateDateTime,
 	                                           u.FirstName,
 	                                           u.LastName,
 	                                           u.DisplayName,
@@ -40,7 +61,7 @@ namespace TabloidMVC.Repositories
 	                                           LEFT JOIN UserType ut ON u.UserTypeId = ut.Id
                                                LEFT JOIN Post p ON c.PostId = p.Id
                                                WHERE PostId = @Id
-	                                           ORDER BY CreateDateTime DESC";
+	                                           ORDER BY CommentCreateDateTime DESC";
 
                     cmd.Parameters.AddWithValue(@"Id", id);
                     var reader = cmd.ExecuteReader();
@@ -66,6 +87,7 @@ namespace TabloidMVC.Repositories
                 Id = reader.GetInt32(reader.GetOrdinal("Id")),
                 Subject = reader.GetString(reader.GetOrdinal("Subject")),
                 Content = reader.GetString(reader.GetOrdinal("Content")),
+                CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CommentCreateDateTime")),
                 PostId = reader.GetInt32(reader.GetOrdinal("PostId")),
                 PostTitle = reader.GetString(reader.GetOrdinal("PostTitle")),
                 UserProfileId = reader.GetInt32(reader.GetOrdinal("UserProfileId")),
