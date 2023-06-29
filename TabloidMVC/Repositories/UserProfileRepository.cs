@@ -174,7 +174,14 @@ namespace TabloidMVC.Repositories
             }
         }
 
-
+        public void Edit(UserProfile userProfile) 
+        {
+            using (SqlConnection conn = Connection) 
+            {
+                
+            }
+        
+        }
 
         public void DeactivateById(int id)
         {

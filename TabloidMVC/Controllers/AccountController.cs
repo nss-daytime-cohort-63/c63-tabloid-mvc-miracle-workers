@@ -97,5 +97,15 @@ namespace TabloidMVC.Controllers
             _userProfileRepository.DeactivateById(deactivateUser.Id);
             return RedirectToAction("Index"); ;
         }
+
+        public IActionResult Edit(int id) 
+        {
+            
+        }
+
+        public IActionResult Edit(int id, UserProfile target) 
+        {
+        
+        }
     }
 }
