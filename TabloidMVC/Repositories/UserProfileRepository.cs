@@ -36,24 +36,50 @@ namespace TabloidMVC.Repositories
                             CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
                             UserType = new UserType()
                             {
-                            Id = reader.GetInt32(reader.GetOrdinal("TypeId")),
-                            Name = reader.GetString(reader.GetOrdinal("Name"))
+                                Id = reader.GetInt32(reader.GetOrdinal("TypeId")),
+                                Name = reader.GetString(reader.GetOrdinal("Name"))
                             },
                             ActiveFlag = reader.GetBoolean(reader.GetOrdinal("ActiveFlag"))
                         };
-                        if (reader.IsDBNull(reader.GetOrdinal("ImageLocation"))==false)
+                        if (reader.IsDBNull(reader.GetOrdinal("ImageLocation")) == false)
                         {
                             newUser.ImageLocation = reader.GetString(reader.GetOrdinal("ImageLocation"));
 
                         }
                         users.Add(newUser);
 
-      
+
                     }
                     return users;
                 }
-            } 
+            }
         }
+
+
+        public List<UserType> GetUserTypes()
+            {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand()) 
+                {
+                    cmd.CommandText = @"select Id, [Name] from UserType";
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    List<UserType> users = new List<UserType>();
+                    while (reader.Read()) 
+                    {
+                        UserType user = new UserType()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name= reader.GetString(reader.GetOrdinal("Name"))
+                        };
+                        users.Add(user);
+                    }
+                    return users;
+                }
+            }
+            }
 
         public UserProfile GetById(int id)
         {
@@ -62,7 +88,7 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"select UserProfile.Id as UserId, DisplayName, FirstName, LastName, Email, CreateDateTime,ImageLocation, UserType.Id as TypeId, UserType.Name, ActiveFlag
+                    cmd.CommandText = @"select UserProfile.Id as UserId, DisplayName, FirstName, LastName, Email, CreateDateTime,ImageLocation,UserTypeId, UserType.Id as TypeId, UserType.Name, ActiveFlag
                                         from UserProfile
                                         join UserType on UserProfile.UserTypeId = UserType.Id
                                         where UserProfile.Id = @id";
@@ -81,6 +107,7 @@ namespace TabloidMVC.Repositories
                             selectedUser.Email = reader.GetString(reader.GetOrdinal("Email"));
                             selectedUser.CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime"));
                             selectedUser.ActiveFlag = reader.GetBoolean(reader.GetOrdinal("ActiveFlag"));
+                            selectedUser.UserTypeId = reader.GetInt32(reader.GetOrdinal("UserTypeId"));
                             selectedUser.UserType = new UserType()
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("TypeId")),
@@ -174,7 +201,23 @@ namespace TabloidMVC.Repositories
             }
         }
 
-
+        public void EditType(UserProfile userProfile) 
+        {
+            using (SqlConnection conn = Connection) 
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand()) 
+                {
+                    cmd.CommandText = @"update UserProfile
+                                      SET UserProfile.UserTypeId = @typeId
+                                        where Id=@id";
+                    cmd.Parameters.AddWithValue("@id", userProfile.Id);
+                    cmd.Parameters.AddWithValue("@typeId", userProfile.UserTypeId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        
+        }
 
         public void DeactivateById(int id)
         {
