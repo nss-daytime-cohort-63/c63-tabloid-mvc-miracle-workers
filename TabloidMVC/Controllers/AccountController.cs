@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using TabloidMVC.Models;
+using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
@@ -12,10 +14,12 @@ namespace TabloidMVC.Controllers
     public class AccountController : Controller
     {
         private readonly IUserProfileRepository _userProfileRepository;
+        
 
         public AccountController(IUserProfileRepository userProfileRepository)
         {
             _userProfileRepository = userProfileRepository;
+            
         }
 
         public IActionResult Login()
@@ -95,17 +99,26 @@ namespace TabloidMVC.Controllers
         {
             
             _userProfileRepository.DeactivateById(deactivateUser.Id);
-            return RedirectToAction("Index"); ;
+            return RedirectToAction("Index"); 
         }
-
+        [Authorize]
         public IActionResult Edit(int id) 
         {
-            
-        }
+            UserProfileTypeVM vm = new UserProfileTypeVM()
+            {
+                user = _userProfileRepository.GetById(id),
+                roleTypes = _userProfileRepository.GetUserTypes()
 
-        public IActionResult Edit(int id, UserProfile target) 
+            };
+            
+            return View(vm);
+        }
+        [Authorize,HttpPost,ValidateAntiForgeryToken]
+        public IActionResult Edit(int id, UserProfileTypeVM target) 
         {
-        
+            _userProfileRepository.EditType(target.user);
+            return RedirectToAction("Index");
+
         }
     }
 }
