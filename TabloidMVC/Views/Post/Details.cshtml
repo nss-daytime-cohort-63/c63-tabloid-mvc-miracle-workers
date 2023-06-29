@@ -36,6 +36,9 @@
                 <a asp-area="" asp-controller="Comment" asp-action="Create" asp-route-postId="@Model.Id" class="btn btn-outline-primary mx-1" title="New Comment">
                     <i class="fas fa-bullhorn"></i>
                 </a>
+                <a asp-action="TagManagement" asp-route-id="@Model.Id" class="btn btn-outline-primary mx-1" title="Manage Tags">
+                    <i class="fas fa-tags"></i>
+                </a>
             </div>
         </section>
         <hr />
