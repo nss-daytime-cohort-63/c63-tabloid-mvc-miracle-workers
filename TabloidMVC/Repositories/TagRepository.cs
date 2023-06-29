@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using TabloidMVC.Models;
@@ -109,6 +110,40 @@ namespace TabloidMVC.Repositories
 
                     cmd.Parameters.AddWithValue("@id", id);
                     cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public List<Tag> GetPostTags(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT p.Id, p.Title, pt.PostId, pt.TagId, t.Id, t.Name as TagName
+                                        FROM POST p
+                                        JOIN PostTag pt ON p.Id = pt.PostId
+                                        JOIN TAG t ON pt.TagId = t.ID
+                                        WHERE pt.PostId = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    var reader = cmd.ExecuteReader();
+                    
+                    var tags = new List<Tag>();
+
+                    while (reader.Read())
+                    {
+                        tags.Add(new Tag()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                        });
+                    }
+
+                    reader.Close();
+
+                    return tags;
                 }
             }
         }
