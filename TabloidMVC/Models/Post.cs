@@ -38,6 +38,10 @@ namespace TabloidMVC.Models
         {
             get
             {
+                if (Content == null)
+                {
+                    return 0;
+                }
                 int wordCount = Content.Split(new[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries).Length;
                 int estimatedTime = (int)Math.Ceiling((double)wordCount / 265);
                 return estimatedTime;
