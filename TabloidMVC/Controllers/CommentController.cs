@@ -19,6 +19,8 @@ namespace TabloidMVC.Controllers
         public ActionResult Index(int id)
         {
             var comments = _commentRepository.GetAllCommentsByPostId(id);
+            ViewBag.PostTitle = comments[0].PostTitle;
+            ViewBag.PostId = comments[0].PostId;
             return View(comments);
         }
 

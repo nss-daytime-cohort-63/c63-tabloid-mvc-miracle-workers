@@ -20,6 +20,9 @@ namespace TabloidMVC.Models
         [DisplayName("Post")]
         public int PostId { get; set; }
 
+        public string PostTitle { get; set; }
+
+
         [DisplayName("Author")]
         public int UserProfileId { get; set; }
         public UserProfile UserProfile { get; set; }

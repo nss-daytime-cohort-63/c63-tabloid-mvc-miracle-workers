@@ -4,17 +4,14 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>@ViewBag.PostTitle</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-primary" asp-action="Create">New Comment</a>
 </p>
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Subject)
             </th>
@@ -25,10 +22,7 @@
                 @Html.DisplayNameFor(model => model.CreateDateTime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PostId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserProfileId)
+                @Html.DisplayNameFor(model => model.UserProfile.FullName)
             </th>
             <th></th>
         </tr>
@@ -36,9 +30,6 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Subject)
             </td>
@@ -49,17 +40,16 @@
                 @Html.DisplayFor(modelItem => item.CreateDateTime)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PostId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserProfileId)
+                @Html.DisplayFor(modelItem => item.UserProfile.FullName)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id=item.Id }) |
                 @Html.ActionLink("Delete", "Delete", new { id=item.Id })
             </td>
         </tr>
-}
+        }
+        <a asp-area="" asp-controller="Post" asp-action="Details" asp-route-id="@ViewBag.PostId" class="btn btn-outline-primary mx-1" title="Back To Post">
+            <i class="fas fa-times"></i>
+        </a>
     </tbody>
 </table>

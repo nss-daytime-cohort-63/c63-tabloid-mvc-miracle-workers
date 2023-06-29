@@ -33,10 +33,12 @@ namespace TabloidMVC.Repositories
 	                                           u.CreateDateTime AS UserRegisterDate,
 	                                           u.ImageLocation AS AvatarImage,
 	                                           u.UserTypeId,
-	                                           ut.[Name] AS UserTypeName
-                                          FROM Comment c
+	                                           ut.[Name] AS UserTypeName,
+                                               p.Title AS PostTitle
+                                               FROM Comment c
 	                                           LEFT JOIN UserProfile u ON c.UserProfileId = u.Id
 	                                           LEFT JOIN UserType ut ON u.UserTypeId = ut.Id
+                                               LEFT JOIN Post p ON c.PostId = p.Id
                                                WHERE PostId = @Id
 	                                           ORDER BY CreateDateTime DESC";
 
@@ -65,6 +67,7 @@ namespace TabloidMVC.Repositories
                 Subject = reader.GetString(reader.GetOrdinal("Subject")),
                 Content = reader.GetString(reader.GetOrdinal("Content")),
                 PostId = reader.GetInt32(reader.GetOrdinal("PostId")),
+                PostTitle = reader.GetString(reader.GetOrdinal("PostTitle")),
                 UserProfileId = reader.GetInt32(reader.GetOrdinal("UserProfileId")),
                 UserProfile = new UserProfile()
                 {
