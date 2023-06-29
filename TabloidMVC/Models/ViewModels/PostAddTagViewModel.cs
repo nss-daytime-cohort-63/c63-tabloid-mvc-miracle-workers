@@ -6,6 +6,7 @@ namespace TabloidMVC.Models.ViewModels
     {
         public Post Post {  get; set; }
 
+        public Tag Tag { get; set; }
         public List<Tag> TagOptions { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic;
 using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
@@ -176,21 +177,26 @@ namespace TabloidMVC.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult TagManagement(Post post)
+        public IActionResult TagManagement(PostAddTagViewModel pt)
         {
             try
             {
-                int userId = GetCurrentUserProfileId();
-                _postRepository.EditPost(post, userId);
+                pt.Post = _postRepository.GetPublishedPostById(pt.Post.Id);
+
+                if (pt.Post == null) 
+                {
+                    return NotFound();
+                }
+                _postRepository.AddTagToPost(pt.Post.Id, pt.Tag.Id);
+                
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"{ex.Message}");
-                return View(post);
+                return View(pt);
             }
         }
-
         private int GetCurrentUserProfileId()
         {
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
