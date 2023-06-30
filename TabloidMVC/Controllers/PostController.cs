@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic;
 using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
@@ -15,11 +16,13 @@ namespace TabloidMVC.Controllers
     {
         private readonly IPostRepository _postRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ITagRepository _tagRepository;
 
-        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository)
+        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository, ITagRepository tagRepository)
         {
             _postRepository = postRepository;
             _categoryRepository = categoryRepository;
+            _tagRepository = tagRepository;
         }
 
         public IActionResult Index()
@@ -65,17 +68,25 @@ namespace TabloidMVC.Controllers
         }
         public IActionResult Details(int id)
         {
+
             var post = _postRepository.GetPublishedPostById(id);
-            if (post == null)
+
+            PostAddTagViewModel vm = new PostAddTagViewModel()
+            {
+                Post = post,
+                TagOptions = _postRepository.GetPostTags(id),
+            };
+
+            if (vm.Post == null)
             {
                 int userId = GetCurrentUserProfileId();
-                post = _postRepository.GetUserPostById(id, userId);
-                if (post == null)
+                vm.Post = _postRepository.GetUserPostById(id, userId);
+                if (vm.Post == null)
                 {
                     return NotFound();
                 }
             }
-            return View(post);
+            return View(vm);
         }
 
         public IActionResult Create()
@@ -159,6 +170,41 @@ namespace TabloidMVC.Controllers
             }
         }
 
+        public IActionResult TagManagement(int id)
+        {
+
+            var tagM = new PostAddTagViewModel();
+            tagM.TagOptions = _tagRepository.GetAll();
+            tagM.Post = _postRepository.GetPublishedPostById(id);
+
+            if (tagM.Post == null)
+            {
+                return NotFound();
+            }
+            return View(tagM);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult TagManagement(PostAddTagViewModel pt)
+        {
+            try
+            {
+                pt.Post = _postRepository.GetPublishedPostById(pt.Post.Id);
+
+                if (pt.Post == null) 
+                {
+                    return NotFound();
+                }
+                _postRepository.AddTagToPost(pt.Post.Id, pt.Tag.Id);
+                
+                return RedirectToAction("Details", "Post", new { id = pt.Post.Id });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{ex.Message}");
+                return View(pt);
+            }
+        }
         private int GetCurrentUserProfileId()
         {
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
