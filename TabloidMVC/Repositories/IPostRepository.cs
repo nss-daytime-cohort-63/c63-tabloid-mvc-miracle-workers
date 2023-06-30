@@ -16,5 +16,7 @@ namespace TabloidMVC.Repositories
         void EditPost(Post post, int userProfileId);
         List<Post> GetAllUnapprovedPosts();
         void EditPostApproval(Post post);
+        void AddTagToPost(int postId, int id);
+        List<Tag> GetPostTags (int id);
     }
 }

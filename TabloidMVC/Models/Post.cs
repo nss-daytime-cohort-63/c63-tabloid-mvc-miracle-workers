@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace TabloidMVC.Models
 {
@@ -47,5 +48,7 @@ namespace TabloidMVC.Models
                 return estimatedTime;
             }
         }
+
+        public List<Tag> Tags { get; set; }
     }
 }
