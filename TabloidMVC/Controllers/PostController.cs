@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic;
@@ -27,8 +28,13 @@ namespace TabloidMVC.Controllers
 
         public IActionResult Index()
         {
-            var posts = _postRepository.GetAllPublishedPosts();
-            return View(posts);
+            PostIndexVM vm = new PostIndexVM()
+            {
+                CategoryOptions = _categoryRepository.GetAll(),
+                Posts = _postRepository.GetAllPublishedPosts()
+
+            };
+            return View(vm);
         }
 
 
@@ -204,6 +210,14 @@ namespace TabloidMVC.Controllers
                 Console.WriteLine($"{ex.Message}");
                 return View(pt);
             }
+        }
+        public IActionResult IndexByCategory(IFormCollection form)
+        {
+
+            List<Post> posts = _postRepository.GetPostsByCategory(int.Parse(form["CategoryOptions"]));
+
+           
+            return View(posts);
         }
         private int GetCurrentUserProfileId()
         {
