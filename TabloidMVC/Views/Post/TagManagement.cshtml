@@ -9,23 +9,23 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="TagManagement">
+        <form asp-action="RemoveTag">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <input asp-for="Post.Id" class="form-control" type="hidden" />
             </div>
+            Current Tags associated with this Post: 
             <div class="form-group">
-                <label asp-for="Post.Tags" class="control-label">Current Tags</label>
-                <select asp-for="Post.Tags" class="form-control">
-                    @foreach (var postTag in Model.Post.Tags)
+                    @foreach (var postTag in Model.PostTags)
                     {
-                        <option value="@postTag.Id">@postTag.Name</option>
+                        <input asp-for="Tag.Id" type="radio" value="@postTag.Id" />
+                        <label asp-for="Tag.Id">@postTag.Name</label>
                     }
-                </select>
-                <span asp-validation-for="Post.Tags" class="text-danger"></span>
+                
             </div>
             <div class="form-group">
-                <input type="submit" value="Add Tag" class="btn btn-primary" />
+                Remove tag selected tag?
+                <input type="submit" value="Remove Tags" class="btn btn-primary" />
             </div>
         </form>
     </div>

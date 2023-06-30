@@ -415,7 +415,7 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT p.Id, p.Title, pt.PostId, pt.TagId, t.Id, t.Name as TagName
+                    cmd.CommandText = @"SELECT p.Id, p.Title, pt.PostId, pt.TagId, t.Id AS TagId, t.Name as TagName
                                         FROM POST p
                                         JOIN PostTag pt ON p.Id = pt.PostId
                                         JOIN TAG t ON pt.TagId = t.ID
@@ -430,7 +430,7 @@ namespace TabloidMVC.Repositories
                     {
                         tags.Add(new Tag()
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Id = reader.GetInt32(reader.GetOrdinal("TagId")),
                             Name = reader.GetString(reader.GetOrdinal("TagName")),
                         });
                     }
@@ -438,6 +438,23 @@ namespace TabloidMVC.Repositories
                     reader.Close();
 
                     return tags;
+                }
+            }
+        }
+
+        public void RemoveTagFromPost(int postId, int tagId)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd =conn.CreateCommand())
+                {
+                    cmd.CommandText = @"DELETE FROM PostTag
+                                        WHERE PostId = @postId AND TagId = @tagId";
+                    cmd.Parameters.AddWithValue("@postId", postId);
+                    cmd.Parameters.AddWithValue("@tagId", tagId);
+
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
