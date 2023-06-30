@@ -62,7 +62,7 @@ namespace TabloidMVC.Controllers
             {
                 comment.UserProfileId = GetCurrentUserProfileId();
                 _commentRepository.AddComment(comment);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", new { id = comment.PostId });
             }
             catch
             {
