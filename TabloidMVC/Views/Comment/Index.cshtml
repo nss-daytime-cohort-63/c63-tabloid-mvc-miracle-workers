@@ -8,7 +8,7 @@
     <h1>@ViewBag.PostTitle</h1>
 
     <p>
-        <a class="btn btn-primary" asp-action="Create">New Comment</a>
+        <a class="btn btn-primary" asp-action="Create" asp-route-postId="@ViewBag.PostId">New Comment</a>
     </p>
     <table class="table">
         <thead>
@@ -29,7 +29,8 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model) {
+            @foreach (var item in Model)
+            {
                 <tr>
                     <td>
                         @Html.DisplayFor(modelItem => item.Subject)
@@ -44,18 +45,21 @@
                         @Html.DisplayFor(modelItem => item.UserProfile.FullName)
                     </td>
                     <td>
-                        @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-                        @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
                     </td>
                 </tr>
             }
         </tbody>
     </table>
-            <a asp-area="" asp-controller="Post" asp-action="Details" asp-route-id="@ViewBag.PostId" class="btn btn-outline-primary mx-1" title="Back To Post">
-                <i class="fas fa-times"></i>
-            </a>
+    <a asp-area="" asp-controller="Post" asp-action="Details" asp-route-id="@ViewBag.PostId" class="btn btn-outline-primary mx-1" title="Back To Post">
+        <i class="fas fa-times"></i>
+    </a>
 }
 else
 {
     <h2>No Comments</h2>
+    <a asp-area="" asp-controller="Post" asp-action="Index" class="btn btn-outline-primary mx-1" title="Back To Posts">
+        <i class="fas fa-times"></i>
+    </a>
 }
