@@ -68,17 +68,25 @@ namespace TabloidMVC.Controllers
         }
         public IActionResult Details(int id)
         {
+
             var post = _postRepository.GetPublishedPostById(id);
-            if (post == null)
+
+            PostAddTagViewModel vm = new PostAddTagViewModel()
+            {
+                Post = post,
+                TagOptions = _postRepository.GetPostTags(id),
+            };
+
+            if (vm.Post == null)
             {
                 int userId = GetCurrentUserProfileId();
-                post = _postRepository.GetUserPostById(id, userId);
-                if (post == null)
+                vm.Post = _postRepository.GetUserPostById(id, userId);
+                if (vm.Post == null)
                 {
                     return NotFound();
                 }
             }
-            return View(post);
+            return View(vm);
         }
 
         public IActionResult Create()
