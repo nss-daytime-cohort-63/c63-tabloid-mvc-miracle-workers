@@ -15,21 +15,45 @@
                 <input asp-for="Post.Id" class="form-control" type="hidden" />
             </div>
             <div class="form-group">
-                <label asp-for="Tag.Id" class="control-label">Tags</label>
-                <select asp-for="Tag.Id" class="form-control">
-                    @foreach (var tag in Model.TagOptions)
+                <label asp-for="Post.Tags" class="control-label">Current Tags</label>
+                <select asp-for="Post.Tags" class="form-control">
+                    @foreach (var postTag in Model.Post.Tags)
                     {
-                        <option value="@tag.Id">@tag.Name</option>
+                        <option value="@postTag.Id">@postTag.Name</option>
                     }
                 </select>
-                <span asp-validation-for="Tag.Id" class="text-danger"></span>
+                <span asp-validation-for="Post.Tags" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Add Tag" class="btn btn-primary" />
             </div>
         </form>
     </div>
+        <div class="col-md-4">
+            <form asp-action="TagManagement">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <input asp-for="Post.Id" class="form-control" type="hidden" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Tag.Id" class="control-label">Tags</label>
+                    <select asp-for="Tag.Id" class="form-control">
+                        @foreach (var tag in Model.TagOptions)
+                        {
+                            <option value="@tag.Id">@tag.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Tag.Id" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Add Tag" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
 </div>
+   
+       
+
 
 <div>
     <a asp-action="Index">Back to List</a>
