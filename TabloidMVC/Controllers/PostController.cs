@@ -182,11 +182,13 @@ namespace TabloidMVC.Controllers
             var tagM = new PostAddTagViewModel();
             tagM.TagOptions = _tagRepository.GetAll();
             tagM.Post = _postRepository.GetPublishedPostById(id);
+            tagM.PostTags = _postRepository.GetPostTags(id);
 
             if (tagM.Post == null)
             {
                 return NotFound();
             }
+
             return View(tagM);
         }
         [HttpPost]
@@ -195,7 +197,7 @@ namespace TabloidMVC.Controllers
         {
             try
             {
-                pt.Post = _postRepository.GetPublishedPostById(pt.Post.Id);
+               
 
                 if (pt.Post == null) 
                 {
@@ -211,6 +213,29 @@ namespace TabloidMVC.Controllers
                 return View(pt);
             }
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult RemoveTag(PostAddTagViewModel pt)
+        {
+            try
+            {
+
+                if (pt.Post == null)
+                {
+                    return NotFound();
+                }
+
+                 _postRepository.RemoveTagFromPost(pt.Post.Id, pt.Tag.Id);
+
+                return RedirectToAction("Details", "Post", new { id = pt.Post.Id });
+            }
+            catch (Exception ex) 
+            {
+                Console.WriteLine($"{ex.Message}");
+                return View(pt);
+            }
+        }
         public IActionResult IndexByCategory(IFormCollection form)
         {
 
@@ -219,6 +244,8 @@ namespace TabloidMVC.Controllers
            
             return View(posts);
         }
+
+
         private int GetCurrentUserProfileId()
         {
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);

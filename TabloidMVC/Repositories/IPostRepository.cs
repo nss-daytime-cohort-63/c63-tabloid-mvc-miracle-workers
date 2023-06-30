@@ -19,5 +19,6 @@ namespace TabloidMVC.Repositories
         void AddTagToPost(int postId, int id);
         List<Tag> GetPostTags (int id);
         List<Post> GetPostsByCategory(int id);
+        void RemoveTagFromPost(int postId, int tagId);
     }
 }
