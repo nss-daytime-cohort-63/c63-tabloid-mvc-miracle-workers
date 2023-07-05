@@ -9,6 +9,8 @@ namespace TabloidMVC.Models.ViewModels
     {
         public List<Post> Posts { get; set; }
         public List<Category> CategoryOptions { get; set; }
+        public List<UserProfile> UserOptions { get; set; }
         public int SelectedCategoryId { get; set; }
+        public int SelectedProfileId { get; set;}
     }
 }

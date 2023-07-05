@@ -11,6 +11,7 @@
     <p>
         <a class="btn btn-primary" asp-action="Create">New Post</a>
     </p>
+    <div style="display: flex; flex-wrap: wrap;">
         <form class="mt-5 card-body" asp-action="IndexByCategory">
     <div class="form-group">
         <label asp-for="@Model.CategoryOptions" class="control-label">Filter by category</label>
@@ -24,6 +25,20 @@
         <span asp-validation-for="@Model.CategoryOptions" class="text-danger"></span>
     </div>
         </form>
+    <form class="mt-5 card-body" asp-action="IndexByUser">
+        <div class="form-group">
+            <label asp-for="@Model.UserOptions" class="control-label">Filter by User</label>
+            <select asp-for="@Model.UserOptions" class="form-control">
+                @foreach (var user in Model.UserOptions)
+                {
+                    <option value="@user.Id">@user.FullName</option>
+                }
+            </select>
+            <button type="submit" value="SAVE" class="btn btn-primary">Search by User</button>
+            <span asp-validation-for="@Model.UserOptions" class="text-danger"></span>
+        </div>
+    </form>
+    </div>
     <table class="table table-striped">
         <thead>
             <tr>
