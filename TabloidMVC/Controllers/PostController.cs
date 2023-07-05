@@ -18,12 +18,14 @@ namespace TabloidMVC.Controllers
         private readonly IPostRepository _postRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly ITagRepository _tagRepository;
+        private readonly IUserProfileRepository _userProfileRepository;
 
-        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository, ITagRepository tagRepository)
+        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository, ITagRepository tagRepository, IUserProfileRepository userProfileRepository)
         {
             _postRepository = postRepository;
             _categoryRepository = categoryRepository;
             _tagRepository = tagRepository;
+            _userProfileRepository = userProfileRepository;
         }
 
         public IActionResult Index()
@@ -31,6 +33,7 @@ namespace TabloidMVC.Controllers
             PostIndexVM vm = new PostIndexVM()
             {
                 CategoryOptions = _categoryRepository.GetAll(),
+                UserOptions = _userProfileRepository.GetAll(),
                 Posts = _postRepository.GetAllPublishedPosts()
 
             };
@@ -242,6 +245,15 @@ namespace TabloidMVC.Controllers
             List<Post> posts = _postRepository.GetPostsByCategory(int.Parse(form["CategoryOptions"]));
 
            
+            return View(posts);
+        }
+
+        public IActionResult IndexByUser(IFormCollection form)
+        {
+
+            List<Post> posts = _postRepository.GetAllPublishedPostsByAuthorId(int.Parse(form["UserOptions"]));
+
+
             return View(posts);
         }
 
